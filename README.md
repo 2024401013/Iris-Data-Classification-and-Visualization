@@ -29,7 +29,7 @@ pip install plotly
 ### 项目结构
 
 ```
-iris-project/
+Iris-Data-Classification-and-Visualization/
 ├── main.py                      # 主程序入口
 ├── config.py                    # 配置管理
 ├── data_manager.py              # 数据加载与预处理
