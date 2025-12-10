@@ -135,7 +135,7 @@ def main():
         
         if task4_fig:
             print("✅ Task 4 completed successfully!")
-        
+            
         # 6. 总结
         print("\n" + "="*70)
         print("✅ PROJECT COMPLETED SUCCESSFULLY!")

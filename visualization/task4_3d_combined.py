@@ -417,3 +417,96 @@ class Task4Visualizer:
             print(f"  ✅ 2D projections saved to: {filename}")
         
         plt.show()
+
+    def plot_ppt_style_multiple_planes(self, feature_names):
+        """
+        绘制PPT风格的多决策平面示意图
+        适用于任务4：三分类，三个特征
+        """
+        print("\n📊 Generating PPT-style multiple decision planes (idealized)...")
+        
+        # 创建合成数据（三个类别）
+        np.random.seed(42)
+        n_per_class = 50
+        
+        # 三个类别的合成数据
+        X1 = np.random.multivariate_normal(mean=[-2, 0, 0], cov=np.eye(3)*0.2, size=n_per_class)
+        X2 = np.random.multivariate_normal(mean=[0, 2, 0], cov=np.eye(3)*0.2, size=n_per_class)
+        X3 = np.random.multivariate_normal(mean=[2, 0, 0], cov=np.eye(3)*0.2, size=n_per_class)
+        
+        X_synthetic = np.vstack([X1, X2, X3])
+        y_synthetic = np.hstack([np.zeros(n_per_class), 
+                                np.ones(n_per_class), 
+                                np.ones(n_per_class)*2])
+        
+        # 创建图形
+        fig = plt.figure(figsize=(14, 10))
+        ax = fig.add_subplot(111, projection='3d')
+        ax.view_init(elev=25, azim=45)
+        
+        # 绘制三个类别的数据点
+        colors = [self.config.COLORS['setosa'], 
+                self.config.COLORS['versicolor'], 
+                self.config.COLORS['virginica']]
+        
+        for i in range(3):
+            mask = y_synthetic == i
+            ax.scatter(X_synthetic[mask, 0], X_synthetic[mask, 1], X_synthetic[mask, 2],
+                    c=colors[i], s=60, alpha=0.8, edgecolor='black',
+                    label=['Class A', 'Class B', 'Class C'][i],
+                    depthshade=True)
+        
+        # 绘制三个决策平面（两两之间的边界）
+        xx, yy = np.meshgrid(np.linspace(-3, 3, 10),
+                            np.linspace(-3, 3, 10))
+        
+        # 平面1：分隔类别0和1
+        plane1 = -xx - yy + 1
+        ax.plot_surface(xx, yy, plane1, 
+                    alpha=0.3, color='#FF9999',
+                    linewidth=0.5, edgecolor='#990000')
+        
+        # 平面2：分隔类别1和2
+        plane2 = xx - yy - 1
+        ax.plot_surface(xx, yy, plane2, 
+                    alpha=0.3, color='#99FF99',
+                    linewidth=0.5, edgecolor='#009900')
+        
+        # 平面3：分隔类别0和2  
+        plane3 = -xx + yy + 1
+        ax.plot_surface(xx, yy, plane3, 
+                    alpha=0.3, color='#9999FF',
+                    linewidth=0.5, edgecolor='#000099')
+        
+        # 设置坐标轴
+        ax.set_xlabel(f'{feature_names[0]}', fontsize=12, labelpad=10)
+        ax.set_ylabel(f'{feature_names[1]}', fontsize=12, labelpad=10)
+        ax.set_zlabel(f'{feature_names[2]}', fontsize=12, labelpad=10)
+        
+        # 标题
+        ax.set_title('PPT Style: Multiple Decision Planes\n'
+                    'Three classes separated by linear boundaries', 
+                    fontsize=14, fontweight='bold', pad=20)
+        
+        ax.legend(fontsize=11, loc='upper right')
+        ax.grid(True, alpha=0.3)
+        
+        # 添加图例说明
+        from matplotlib.patches import Patch
+        legend_elements = [
+            Patch(facecolor='#FF9999', alpha=0.3, edgecolor='#990000', 
+                label='Boundary: Class A vs B'),
+            Patch(facecolor='#99FF99', alpha=0.3, edgecolor='#009900',
+                label='Boundary: Class B vs C'),
+            Patch(facecolor='#9999FF', alpha=0.3, edgecolor='#000099',
+                label='Boundary: Class A vs C'),
+        ]
+        
+        ax.legend(handles=legend_elements, fontsize=10, loc='lower left')
+        
+        plt.tight_layout()
+        
+        if self.config.SAVE_FIGURES:
+            plt.savefig(f"{self.config.OUTPUT_DIR}task4_ppt_style.png", 
+                    dpi=self.config.FIGURE_DPI, bbox_inches='tight')
+        plt.show()
