@@ -204,7 +204,3 @@ OUTPUT_DIR = 'results/'        # 输出目录
 import logging
 logging.basicConfig(level=logging.DEBUG)
 ```
-
----
-
-**✨ 让数据可视化，让机器学习更直观！**
